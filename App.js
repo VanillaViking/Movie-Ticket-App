@@ -32,7 +32,7 @@ function MovieSelect({navigation}) {
   //fetch all movies from database
   const getMovies = async () => {
     try {
-      const response = await fetch('http://localhost:3000/movies');
+      const response = await fetch('https://mta-backend7884.herokuapp.com/movies');
       console.log(response);
       const json = await response.json();
       console.log(json);
@@ -99,7 +99,7 @@ function BookTickets({route, navigation}) {
   } else if (seats < 0) {
     ErrText = 'Enter a positive number';
   } else if (selected && seats > selected.seats) {
-    ErrText = 'Not enough seats available';
+    ErrText = 'Not enough seats available, please book a different session';
   } else if (!Number.isInteger(Number(seats))) {
     ErrText = 'Enter a whole number';
   }
@@ -137,7 +137,7 @@ function BookTickets({route, navigation}) {
         title="Book" 
         onPress={() => {
           if (ErrText === '' && selected) {
-            fetch('http://localhost:3000/Book', {
+            fetch('https://mta-backend7884.herokuapp.com/Book', {
               method: 'POST',
               headers: {'Content-Type': 'application/json'},
               body: JSON.stringify({movie: title, time: selected.time, seats: selected.seats, bookedSeats: seats})
@@ -150,7 +150,7 @@ function BookTickets({route, navigation}) {
   );
 }
 
-function finishScreen({route, navigation}) {
+function FinishScreen({route, navigation}) {
   const {movie, time, bookedSeats} = route.params;
   return (
     <View style={{alignItems: 'center'}}>
@@ -176,7 +176,7 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Movies" component={MovieSelect} />
         <Stack.Screen name="Book Tickets" component={BookTickets} />
-        <Stack.Screen name="Done" component={finishScreen} />
+        <Stack.Screen name="Done" component={FinishScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
