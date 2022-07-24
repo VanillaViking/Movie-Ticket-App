@@ -14,7 +14,7 @@ const Separator = () => (
 function HomeScreen({navigation}) {
   return (
     <View style={{alignItems: 'center'}}>
-      <h1 style={{padding: 20}}>Movie Ticket App</h1>
+      <Text style={styles.heading}>Movie Ticket App</Text>
       <Button 
         title="Book Tickets"
         onPress={() => navigation.navigate('Movies')}
@@ -49,7 +49,7 @@ function MovieSelect({navigation}) {
 
   return (
     <View style={{alignItems: 'center'}}>
-      <h1>Available Movies</h1>
+      <Text style={styles.heading}>Available Movies</Text>
      <FlatList 
       data={data}
       renderItem={({item}) => {
@@ -106,8 +106,7 @@ function BookTickets({route, navigation}) {
 
   return (
     <View style={{alignItems: 'center'}}>
-      <h1>Booking Tickets for: {title}</h1>
-      <View style={{flexDirection: 'row'}}>
+      <Text style={styles.heading}>Booking Tickets for: {title}</Text>
         <FlatList
           data={timings} 
           renderItem={({item}) => {
@@ -121,7 +120,6 @@ function BookTickets({route, navigation}) {
             );
           }}
         />   
-        <View style={{alignItems: 'center'}}>
           <Text style={styles.title}>{seatText}</Text>
           <TextInput 
             style={styles.input}
@@ -130,8 +128,6 @@ function BookTickets({route, navigation}) {
             keyboardType="numeric"
           />
           <Text style={{color: 'red'}}>{ErrText}</Text>
-        </View>
-      </View>
       <Separator />
       <Button 
         title="Book" 
@@ -154,7 +150,7 @@ function FinishScreen({route, navigation}) {
   const {movie, time, bookedSeats} = route.params;
   return (
     <View style={{alignItems: 'center'}}>
-      <h1>Tickets Booked!</h1>
+      <Text style={styles.heading}>Tickets Booked!</Text>
       <Text style={styles.title}>{movie}</Text>
       <Text style={{fontSize: 16}}>Date: {new Date(time).toDateString()}</Text>
       <Text style={{fontSize: 16}}>Seats booked: {bookedSeats}</Text>
@@ -188,6 +184,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  heading: {
+    fontSize: 40
   },
   input: {
     height: 40,
