@@ -5,11 +5,15 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
+const Separator = () => (
+  <View style={styles.separator} />
+);
+
 //HOMESCREEN-------------------------------------------------------------------------
 
 function HomeScreen({navigation}) {
   return (
-    <View style={styles.container}>
+    <View style={{alignItems: 'center'}}>
       <h1 style={{padding: 20}}>Movie Ticket App</h1>
       <Button 
         title="Book Tickets"
@@ -62,6 +66,7 @@ function MovieSelect({navigation}) {
       }}
       keyExtractor={movie => movie.title}
       /> 
+      <Separator />
       <Button
         title="Select Movie" 
         onPress={() => {
@@ -88,7 +93,16 @@ function BookTickets({route, navigation}) {
     }
   }, [selected]);
 
-  const ErrText = isNaN(seats) ? 'Enter a Number' : '';
+  let ErrText = '';
+  if (isNaN(seats)) {
+    ErrText = 'Enter a number';
+  } else if (seats < 0) {
+    ErrText = 'Enter a positive number';
+  } else if (selected && seats > selected.seats) {
+    ErrText = 'Not enough seats available';
+  } else if (!Number.isInteger(Number(seats))) {
+    ErrText = 'Enter a whole number';
+  }
 
   return (
     <View style={{alignItems: 'center'}}>
@@ -118,18 +132,36 @@ function BookTickets({route, navigation}) {
           <Text style={{color: 'red'}}>{ErrText}</Text>
         </View>
       </View>
+      <Separator />
       <Button 
         title="Book" 
         onPress={() => {
           if (ErrText === '' && selected) {
-            return fetch('http://localhost:3000/Book', {
+            fetch('http://localhost:3000/Book', {
               method: 'POST',
               headers: {'Content-Type': 'application/json'},
               body: JSON.stringify({movie: title, time: selected.time, seats: selected.seats, bookedSeats: seats})
             }).then(response => console.log(response)).catch(error => console.log(error));
+            navigation.navigate('Done', {movie: title, time: selected.time, bookedSeats: seats})
           }
         }}
       />
+    </View>
+  );
+}
+
+function finishScreen({route, navigation}) {
+  const {movie, time, bookedSeats} = route.params;
+  return (
+    <View style={{alignItems: 'center'}}>
+      <h1>Tickets Booked!</h1>
+      <Text style={styles.title}>{movie}</Text>
+      <Text style={{fontSize: 16}}>Date: {new Date(time).toDateString()}</Text>
+      <Text style={{fontSize: 16}}>Seats booked: {bookedSeats}</Text>
+      
+      <Separator />
+      <Separator />
+      <Button title="Home" onPress={() => {navigation.navigate('Home')}}/>
     </View>
   );
 }
@@ -144,6 +176,7 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Movies" component={MovieSelect} />
         <Stack.Screen name="Book Tickets" component={BookTickets} />
+        <Stack.Screen name="Done" component={finishScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -174,6 +207,11 @@ const styles = StyleSheet.create({
   rating: {
     fontSize: 16,
     color: '#262626'
-  }
+  },
+  separator: {
+    marginVertical: 8,
+    borderBottomColor: '#737373',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
 
 });
